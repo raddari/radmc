@@ -1,5 +1,6 @@
 package io.radmc.client.model;
 
+import io.radmc.client.shader.Attribute;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;

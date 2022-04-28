@@ -1,4 +1,4 @@
-package io.radmc.client.model;
+package io.radmc.client.shader;
 
 import lombok.Getter;
 

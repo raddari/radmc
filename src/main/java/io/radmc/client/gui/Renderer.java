@@ -1,7 +1,7 @@
 package io.radmc.client.gui;
 
-import io.radmc.client.model.Attribute;
 import io.radmc.client.model.Mesh;
+import io.radmc.client.shader.Attribute;
 import lombok.experimental.UtilityClass;
 
 import static org.lwjgl.opengl.GL11C.*;

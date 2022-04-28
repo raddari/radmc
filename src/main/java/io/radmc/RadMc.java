@@ -5,6 +5,8 @@ import io.radmc.client.gui.Renderer;
 import io.radmc.client.gui.Window;
 import io.radmc.client.model.VaoMesh;
 import io.radmc.client.model.Vertex;
+import io.radmc.client.shader.Shader;
+import io.radmc.client.shader.ShaderProgram;
 import lombok.extern.log4j.Log4j2;
 import org.joml.Vector3f;
 import org.lwjgl.Version;
@@ -12,7 +14,11 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWErrorCallbackI;
 import org.lwjgl.opengl.GL;
 
+import java.io.IOException;
+
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL20C.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_SHADER;
 
 @Log4j2
 public final class RadMc implements Runnable {
@@ -35,19 +41,16 @@ public final class RadMc implements Runnable {
     @Override
     public void run() {
         LOGGER.info("Hellow LWJGL {}!", Version.getVersion());
-        loop();
-    }
-
-    private void loop() {
         GL.createCapabilities();
 
         var positions = new Vector3f[] {
-                new Vector3f(0.0F, 0.5F, 0.0F),
+                new Vector3f(-0.5F, 0.5F, 0.0F),
                 new Vector3f(-0.5F, -0.5F, 0.0F),
                 new Vector3f(0.5F, -0.5F, 0.0F),
+                new Vector3f(0.5F, 0.5F, 0.0F),
         };
 
-        var indices = new int[] {0, 1, 2};
+        var indices = new int[] {0, 1, 3, 3, 1, 2};
 
         var mesh = VaoMesh.of(
                 indices,
@@ -55,12 +58,26 @@ public final class RadMc implements Runnable {
                 Vertex.from(positions[1]),
                 Vertex.from(positions[2]));
 
-        while (!window.shouldClose()) {
-            Renderer.clear();
-            Renderer.render(mesh);
-            window.swapBuffers();
-            glfwPollEvents();
+        try (
+                var vertex = new Shader("src/main/resources/shaders/vertex.glsl", GL_VERTEX_SHADER);
+                var fragment = new Shader("src/main/resources/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+                var shader = ShaderProgram.from(vertex, fragment);
+        ) {
+            while (!window.shouldClose()) {
+                Renderer.clear();
+
+                shader.start();
+                Renderer.render(mesh);
+                shader.stop();
+
+                window.swapBuffers();
+                glfwPollEvents();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception in program: ", e);
         }
+
+        mesh.dispose();
     }
 
     public static void main(String[] args) {
