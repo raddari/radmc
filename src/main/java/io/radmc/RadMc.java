@@ -1,15 +1,18 @@
 package io.radmc;
 
 import io.radmc.client.gui.GlfwWindow;
+import io.radmc.client.gui.Renderer;
 import io.radmc.client.gui.Window;
+import io.radmc.client.model.VaoMesh;
+import io.radmc.client.model.Vertex;
 import lombok.extern.log4j.Log4j2;
+import org.joml.Vector3f;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWErrorCallbackI;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 
 @Log4j2
 public final class RadMc implements Runnable {
@@ -37,10 +40,21 @@ public final class RadMc implements Runnable {
 
     private void loop() {
         GL.createCapabilities();
-        glClearColor(1.0F, 0.0F, 0.0F, 0.0F);
+
+        var positions = new Vector3f[] {
+                new Vector3f(0.0F, 0.5F, 0.0F),
+                new Vector3f(-0.5F, -0.5F, 0.0F),
+                new Vector3f(0.5F, -0.5F, 0.0F),
+        };
+
+        var mesh = VaoMesh.of(
+                Vertex.from(positions[0]),
+                Vertex.from(positions[1]),
+                Vertex.from(positions[2]));
 
         while (!window.shouldClose()) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            Renderer.clear();
+            Renderer.render(mesh);
             window.swapBuffers();
             glfwPollEvents();
         }
