@@ -9,6 +9,7 @@ import io.radmc.client.shader.Shader;
 import io.radmc.client.shader.ShaderProgram;
 import lombok.extern.log4j.Log4j2;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWErrorCallbackI;
@@ -50,14 +51,21 @@ public final class RadMc implements Runnable {
                 new Vector3f(0.5F, 0.5F, 0.0F),
         };
 
+        var colours = new Vector4f[] {
+                new Vector4f(0.5F, 0.0F, 0.0F, 1.0F),
+                new Vector4f(0.0F, 0.5F, 0.0F, 1.0F),
+                new Vector4f(0.0F, 0.0F, 0.5F, 1.0F),
+                new Vector4f(0.5F, 0.5F, 0.5F, 1.0F),
+        };
+
         var indices = new int[] {0, 1, 3, 3, 1, 2};
 
         var mesh = VaoMesh.of(
                 indices,
-                Vertex.from(positions[0]),
-                Vertex.from(positions[1]),
-                Vertex.from(positions[2]),
-                Vertex.from(positions[3]));
+                Vertex.from(positions[0], colours[0]),
+                Vertex.from(positions[1], colours[1]),
+                Vertex.from(positions[2], colours[2]),
+                Vertex.from(positions[3], colours[3]));
 
         try (
                 var vertex = new Shader("src/main/resources/shaders/vertex.glsl", GL_VERTEX_SHADER);

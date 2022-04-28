@@ -1,6 +1,7 @@
 package io.radmc.client.model;
 
 import io.radmc.client.shader.Attribute;
+import io.radmc.util.ArrayUtil;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -47,11 +48,11 @@ public final class VaoMesh extends Mesh {
     }
 
     private void storeAttributes() {
-        var positions = new float[3 * vertices.length];
-        for (var i = 0; i < vertices.length; i++) {
-            var vertex = vertices[i].position();
-            var source = new float[] {vertex.x(), vertex.y(), vertex.z()};
-            System.arraycopy(source, 0, positions, 3 * i, 3);
+        var positions = new float[0];
+        for (var vertex : vertices) {
+            var pos = new float[3];
+            System.arraycopy(vertex.combined(), 0, pos, 0, 3);
+            positions = ArrayUtil.combine(positions, pos);
         }
         store(Attribute.POSITION, positions);
     }
