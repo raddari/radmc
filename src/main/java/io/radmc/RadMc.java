@@ -47,7 +47,10 @@ public final class RadMc implements Runnable {
                 new Vector3f(0.5F, -0.5F, 0.0F),
         };
 
+        var indices = new int[] {0, 1, 2};
+
         var mesh = VaoMesh.of(
+                indices,
                 Vertex.from(positions[0]),
                 Vertex.from(positions[1]),
                 Vertex.from(positions[2]));

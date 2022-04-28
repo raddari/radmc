@@ -5,10 +5,14 @@ import lombok.Getter;
 
 public abstract class Mesh implements Disposable {
 
+    protected final int[] indices;
+    protected final Vertex[] vertices;
     private final @Getter int vertexCount;
 
-    protected Mesh(Vertex[] vertices) {
-        vertexCount = vertices.length;
+    protected Mesh(int[] indices, Vertex[] vertices) {
+        this.indices = indices;
+        this.vertices = vertices;
+        vertexCount = indices.length;
     }
 
     public abstract void bind();

@@ -8,12 +8,12 @@ public enum Attribute {
 
     private final @Getter int location;
     private final @Getter int size;
-    private final @Getter String shaderName;
+    private final @Getter String shaderVar;
 
-    Attribute(int location, int size, String shaderName) {
+    Attribute(int location, int size, String shaderVar) {
         this.location = location;
         this.size = size;
-        this.shaderName = shaderName;
+        this.shaderVar = shaderVar;
     }
 
 }
