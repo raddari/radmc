@@ -56,7 +56,8 @@ public final class RadMc implements Runnable {
                 indices,
                 Vertex.from(positions[0]),
                 Vertex.from(positions[1]),
-                Vertex.from(positions[2]));
+                Vertex.from(positions[2]),
+                Vertex.from(positions[3]));
 
         try (
                 var vertex = new Shader("src/main/resources/shaders/vertex.glsl", GL_VERTEX_SHADER);

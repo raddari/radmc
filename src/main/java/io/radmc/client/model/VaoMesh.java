@@ -32,10 +32,7 @@ public final class VaoMesh extends Mesh {
         glBindVertexArray(vaoId);
 
         generateVbos();
-        for (var vertex : vertices) {
-            var pos = vertex.position();
-            store(Attribute.POSITION, pos.x(), pos.y(), pos.z());
-        }
+        storeAttributes();
         bindIndices();
 
         glBindVertexArray(0);
@@ -49,6 +46,16 @@ public final class VaoMesh extends Mesh {
         }
     }
 
+    private void storeAttributes() {
+        var positions = new float[3 * vertices.length];
+        for (var i = 0; i < vertices.length; i++) {
+            var vertex = vertices[i].position();
+            var source = new float[] {vertex.x(), vertex.y(), vertex.z()};
+            System.arraycopy(source, 0, positions, 3 * i, 3);
+        }
+        store(Attribute.POSITION, positions);
+    }
+
     private void bindIndices() {
         var vboId = glGenBuffers();
         vbos.add(vboId);
@@ -58,7 +65,7 @@ public final class VaoMesh extends Mesh {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
     }
 
-    private void store(Attribute attribute, float... data) {
+    private void store(Attribute attribute, float[] data) {
         glBindBuffer(GL_ARRAY_BUFFER, vbos.get(attribute.location()));
 
         var buffer = storeInBuffer(data);
