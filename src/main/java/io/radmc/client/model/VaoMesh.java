@@ -32,7 +32,6 @@ public final class VaoMesh extends Mesh {
         var vaoId = glGenVertexArrays();
         glBindVertexArray(vaoId);
 
-        generateVbos();
         storeAttributes();
         bindIndices();
 
@@ -40,21 +39,27 @@ public final class VaoMesh extends Mesh {
         return vaoId;
     }
 
-    private void generateVbos() {
-        for (var ignored : Attribute.values()) {
-            var vboId = glGenBuffers();
-            vbos.add(vboId);
+    private void storeAttributes() {
+        for (var attribute : Attribute.values()) {
+            var data = new float[0];
+            for (var vertex : vertices) {
+                data = ArrayUtil.combine(data, vertex.get(attribute));
+            }
+            storeAttribute(attribute, data);
         }
     }
 
-    private void storeAttributes() {
-        var positions = new float[0];
-        for (var vertex : vertices) {
-            var pos = new float[3];
-            System.arraycopy(vertex.combined(), 0, pos, 0, 3);
-            positions = ArrayUtil.combine(positions, pos);
-        }
-        store(Attribute.POSITION, positions);
+    private void storeAttribute(Attribute attribute, float[] data) {
+        var vboId = glGenBuffers();
+        vbos.add(vboId);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+
+        var buffer = storeInBuffer(data);
+        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(attribute.location(), attribute.size(), GL_FLOAT, false, 0, 0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     private void bindIndices() {
@@ -64,16 +69,6 @@ public final class VaoMesh extends Mesh {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
         var buffer = storeInBuffer(indices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-    }
-
-    private void store(Attribute attribute, float[] data) {
-        glBindBuffer(GL_ARRAY_BUFFER, vbos.get(attribute.location()));
-
-        var buffer = storeInBuffer(data);
-        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attribute.location(), attribute.size(), GL_FLOAT, false, 0, 0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     private static FloatBuffer storeInBuffer(float[] data) {
